@@ -16,16 +16,19 @@ import { TabContext, TabList, TabPanel } from '@material-ui/lab'
 class App extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { date: null }
+    this.state = { data: null }
     this.URI =
-      'https://api.nhk.or.jp/v2/pg/genre/130/g1/0000/2021-02-08.json?key=yzrEfoQcuaIhNq54Pls4whL68MiA9fWv'
+      'https://api.nhk.or.jp/v2/pg/genre/' +
+      this.state.area +
+      '/g1/0000/2021-02-09.json?key=yzrEfoQcuaIhNq54Pls4whL68MiA9fWv'
   }
 
-  componentDedMount () {
+  componentDidMount () {
     window
       .fetch(this.URI)
       .then(res => res.json())
-      .then(date => this.setState({ date: date }))
+      .then(json => json.list.g1[0].subtitle)
+      .then(jsondata => this.setState({ data: jsondata }))
   }
 
   render () {
@@ -35,8 +38,9 @@ class App extends React.Component {
         <Paper>
           <h2>説明</h2>
           <TableView />
+          <URIView state={this.state} />
+          <dataProducter />
         </Paper>
-        <uriView date={this.state} />
       </div>
     )
   }
@@ -44,16 +48,36 @@ class App extends React.Component {
 
 const Title = <h1>Title</h1>
 
-const uriView = props => {
-  console.log(props.date)
+const URIView = props => {
+  console.log(props.state.data)
 
-  return <p>{props.date}</p>
+  return (
+    <div>
+      <h2>aaaaaaaaaa</h2>
+      <p>{props.state.data}</p>
+    </div>
+  )
 }
 
 const TableView = props => {
-  const [value, setValue] = React.useState(0)
-  const ints = [1, 2, 3, 4, 5]
-  const date = [
+  const [areaValue, setAreaValue] = React.useState(0)
+  const [serviceValue, setServiceValue] = React.useState(0)
+  const [genreValue, setGenreValue] = React.useState(0)
+  const [dateValue, setDateValue] = React.useState(0)
+  const ints = [1, 2, 3, 4]
+  const today = new Date()
+  const date = []
+  for (let addDate = 0; addDate < 8; addDate++) {
+    date.push(
+      today.getFullYear() +
+        '-' +
+        (today.getMonth() + 1) +
+        '-' +
+        (today.getDate() + addDate)
+    )
+  }
+
+  const data = [
     [
       '札幌',
       '函館',
@@ -158,16 +182,74 @@ const TableView = props => {
       450,
       460,
       470
+    ],
+    [
+      'NHK総合',
+      'NHKEテレ',
+      'NHKワンセグ2',
+      'NHKBS',
+      'NHKBSプレミアム',
+      'NHKラジオ第1',
+      'NHKラジオ第2',
+      'NHKFM'
+    ],
+    [
+      'ニュース/報道（定時・総合）',
+      'スポーツ（スポーツニュース）',
+      '情報/ワイドショー（グルメ・料理）',
+      'ドラマ（国内ドラマ）',
+      '音楽（童話・キッズ）',
+      'バラエティ（トークバラエティ）',
+      '映画（洋画）',
+      'アニメ/特撮（国内アニメ）',
+      'ドキュメンタリー/共用（社会・時事）',
+      '趣味/教育（旅・釣り・アウトドア）',
+      '福祉（高齢者）'
     ]
   ]
 
-  const handleChange = (event, newValue) => {
-    setValue(event.target.value)
+  const areaHandleChange = (event, newValue) => {
+    setAreaValue(event.target.value)
+  }
+  const serviceHandleChange = (event, newValue) => {
+    setServiceValue(event.target.value)
+  }
+  const genreHandleChange = (event, newValue) => {
+    setGenreValue(event.target.value)
+  }
+  const dateHandleChange = (event, newValue) => {
+    setDateValue(event.target.value)
   }
 
   const Views = [
-    <SelectView date={date[0]} onChange={handleChange} value={value} key={0} />,
-    <DemoView date={date[1]} key={1} />
+    <SelectView
+      data={data[0]}
+      name={data[1]}
+      onChange={areaHandleChange}
+      value={areaValue}
+      key={0}
+    />,
+    <SelectView
+      data={data[2]}
+      name={data[1]}
+      onChange={serviceHandleChange}
+      value={serviceValue}
+      key={1}
+    />,
+    <SelectView
+      data={data[3]}
+      name={data[1]}
+      onChange={genreHandleChange}
+      value={genreValue}
+      key={2}
+    />,
+    <SelectView
+      data={date}
+      name={data[1]}
+      onChange={dateHandleChange}
+      value={dateValue}
+      key={2}
+    />
   ]
 
   return (
@@ -190,7 +272,7 @@ const TableView = props => {
 const SelectView = props => {
   return (
     <Select value={props.value} onChange={props.onChange}>
-      {props.date.map((l, i) => (
+      {props.data.map((l, i) => (
         <MenuItem value={i} key={i}>
           {l}
         </MenuItem>
@@ -199,15 +281,4 @@ const SelectView = props => {
   )
 }
 
-const DemoView = props => {
-  return (
-    <Select value={0}>
-      {props.date.map((l, i) => (
-        <MenuItem value={i} key={i}>
-          {l}
-        </MenuItem>
-      ))}
-    </Select>
-  )
-}
 export default App
