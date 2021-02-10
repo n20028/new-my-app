@@ -245,7 +245,7 @@ const TableView = props => {
   const Views = [
     <SelectView
       data={data[0][0]}
-      name={data[1]}
+      name={data[]}
       onChange={areaHandleChange}
       value={areaValue}
       key={0}
