@@ -102,28 +102,24 @@ const TableView = props => {
   const Views = [
     <SelectView
       data={data.area[0]}
-      name={data[1]}
       onChange={areaHandleChange}
       value={areaValue}
       key={0}
     />,
     <SelectView
       data={data.service[0]}
-      name={data[1]}
       onChange={serviceHandleChange}
       value={serviceValue}
       key={1}
     />,
     <SelectView
       data={data.genre[0]}
-      name={data[1]}
       onChange={genreHandleChange}
       value={genreValue}
       key={2}
     />,
     <SelectView
       data={date}
-      name={data[1]}
       onChange={dateHandleChange}
       value={dateValue}
       key={2}
