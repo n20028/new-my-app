@@ -213,22 +213,36 @@ const TableView = props => {
   const ints = [1, 2, 3, 4]
   const today = new Date()
   const date = []
+
+  const toTripleDigits = num => {
+    num += ''
+    if (num.length === 2) {
+      num = '0' + num
+    }
+    return num
+  }
+
+  const toDoubleDigits = num => {
+    num += ''
+    if (num.length === 1) {
+      num = '0' + num
+    }
+    return num
+  }
+
   for (let addDate = 0; addDate < 8; addDate++) {
     date.push(
       today.getFullYear() +
         '-' +
-        (today.getMonth() + 1) +
+        toDoubleDigits(today.getMonth() + 1) +
         '-' +
-        (today.getDate() + addDate)
+        toDoubleDigits(today.getDate() + addDate)
     )
   }
   const [dateParts, setDateParts] = React.useState(date[0])
-  const URI = `https://api.nhk.or.jp/v2/pg/genre/${{ areaParts }} 
-    /${{
-      serviceParts
-    }}/${{ genreParts }}/${{
-    dateParts
-  }}.json?key=yzrEfoQcuaIhNq54Pls4whL68MiA9fWv`
+  const URI = `https://api.nhk.or.jp/v2/pg/genre/${toTripleDigits(
+    areaParts
+  )}/${serviceParts}/${genreParts}/${dateParts}.json?key=yzrEfoQcuaIhNq54Pls4whL68MiA9fWv`
 
   const areaHandleChange = (event, newValue) => {
     setAreaValue(event.target.value)
@@ -277,6 +291,9 @@ const TableView = props => {
   return (
     <Paper>
       {URI}
+      <p>
+        https://api.nhk.or.jp/v2/pg/genre/200/g1/0000/2021-02-13.json?key=_ENTER_YOUR_KEY__
+      </p>
       <Table>
         <TableHead>
           <TableRow>
