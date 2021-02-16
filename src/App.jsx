@@ -217,7 +217,13 @@ const TableView = props => {
   const [areaParts, setAreaParts] = React.useState(data.area[1][0])
   const [serviceParts, setServiceParts] = React.useState(data.service[1][0])
   const [genreParts, setGenreParts] = React.useState(data.genre[1][0])
-  const ints = [1, 2, 3, 4]
+  const [NHKProgram, setNHKProgram] = React.useState(1)
+  const description = [
+    '地域',
+    'サービス',
+    'ジャンル',
+    '日付（当日から1週間先まで）'
+  ]
   const today = new Date()
   const date = []
 
@@ -268,6 +274,16 @@ const TableView = props => {
     setDateParts(date[event.target.value])
   }
 
+  const NHKProgramHandleChange = async props => {
+    await window
+      .fetch(URI)
+      .then(res => res.json)
+      .then(json => json.list)
+      .then(js => console.log({ js }))
+      .then(data => setNHKProgram(data))
+    console.log({ NHKProgram })
+  }
+
   const Views = [
     <SelectView
       data={data.area[0]}
@@ -298,9 +314,6 @@ const TableView = props => {
   return (
     <Paper>
       {URI}
-      <p>
-        https://api.nhk.or.jp/v2/pg/genre/200/g1/0000/2021-02-13.json?key=_ENTER_YOUR_KEY__
-      </p>
       <Table>
         <TableHead>
           <TableRow>
@@ -308,13 +321,17 @@ const TableView = props => {
             <TableCell>値</TableCell>
           </TableRow>
         </TableHead>
-        {ints.map((l, i) => (
+        {description.map((l, i) => (
           <TableRow key={i}>
             <TableCell>{l}</TableCell>
             <TableCell>{Views[i]}</TableCell>
           </TableRow>
         ))}
       </Table>
+      <NHKProgramView
+        state={NHKProgram}
+        handleChange={NHKProgramHandleChange}
+      />
     </Paper>
   )
 }
@@ -327,6 +344,17 @@ const SelectView = props => {
         </MenuItem>
       ))}
     </Select>
+  )
+}
+
+const NHKProgramView = props => {
+  return (
+    <>
+      <Button variant='contained' color='primary' onClick={props.handleChange}>
+        ProgramCreate
+      </Button>
+      <p>{props.state}</p>
+    </>
   )
 }
 
