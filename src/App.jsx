@@ -25,16 +25,18 @@ class App extends React.Component {
   render () {
     return (
       <div>
-        {this.state.data}
-        <h1>{Title}</h1>
-        <h2>説明</h2>
+        <div className='heder'>
+          {Title}
+          {Description}
+        </div>
         <TableView />
       </div>
     )
   }
 }
 
-const Title = <h1>Title</h1>
+const Title = <h1>NHK番組紹介</h1>
+const Description = <h2>NHKの番組を表示します</h2>
 
 const TableView = props => {
   const data = {
@@ -203,6 +205,7 @@ const TableView = props => {
   const [serviceParts, setServiceParts] = React.useState(data.service[1][0])
   const [genreParts, setGenreParts] = React.useState(data.genre[1][0])
   const [NHKProgram, setNHKProgram] = React.useState('')
+  const [SubNHKProgram, setSubNHKProgram] = React.useState('')
   const description = [
     '地域',
     'サービス',
@@ -260,18 +263,42 @@ const TableView = props => {
   }
 
   const NHKProgramHandleChange = async props => {
-    const ProgramList = []
+    const titleList = []
+    const subList = []
     await window
       .fetch(URI)
       .then(res => res.json())
       .then(json => json.list.g1)
       .then(data => {
         for (let ele = 0; ele < data.length; ele++) {
-          ProgramList.push(data[ele].title)
+          titleList.push(data[ele].title)
         }
-        setNHKProgram(ProgramList)
+        setNHKProgram(titleList)
+      })
+    await window
+      .fetch(URI)
+      .then(res => res.json())
+      .then(json => json.list.g1)
+      .then(data => {
+        for (let ele = 0; ele < data.length; ele++) {
+          subList.push(data[ele].subtitle)
+        }
+        setSubNHKProgram(subList)
       })
     console.log(NHKProgram)
+    console.log(SubNHKProgram)
+  }
+
+  const TitleList = []
+
+  for (let ele = 0; ele < NHKProgram.length; ele++) {
+    TitleList.push(NHKProgram[ele])
+  }
+
+  const SubTitleList = []
+
+  for (let ele = 0; ele < SubNHKProgram.length; ele++) {
+    SubTitleList.push(SubNHKProgram[ele])
   }
 
   const Views = [
@@ -304,7 +331,6 @@ const TableView = props => {
   return (
     <>
       <Paper>
-        {URI}
         <Table>
           <TableHead>
             <TableRow>
@@ -321,7 +347,8 @@ const TableView = props => {
         </Table>
       </Paper>
       <NHKProgramView
-        state={NHKProgram}
+        Title={TitleList}
+        SubTitle={SubTitleList}
         handleChange={NHKProgramHandleChange}
       />
     </>
@@ -346,7 +373,7 @@ const NHKProgramView = props => {
         ProgramCreate
       </Button>
       <>
-        {props.state.map((l, i) => (
+        {props.Title.map((l, i) => (
           <Accordion key={i}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -356,11 +383,7 @@ const NHKProgramView = props => {
               <Typography>{l}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
+              <Typography>{props.SubTitle[i]}</Typography>
             </AccordionDetails>
           </Accordion>
         ))}
