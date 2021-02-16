@@ -7,11 +7,14 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Tab,
   Select,
-  MenuItem
+  MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography
 } from '@material-ui/core'
-import { TabContext, TabList, TabPanel } from '@material-ui/lab'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 class App extends React.Component {
   constructor (props) {
@@ -19,17 +22,10 @@ class App extends React.Component {
     this.state = { data: null }
   }
 
-  componentDidMount () {
-    window
-      .fetch(this.URI)
-      .then(res => res.json())
-      .then(json => json.list.g1[0].subtitle)
-      .then(jsondata => this.setState({ data: jsondata }))
-  }
-
   render () {
     return (
       <div>
+        {this.state.data}
         <h1>{Title}</h1>
         <h2>説明</h2>
         <TableView />
@@ -39,17 +35,6 @@ class App extends React.Component {
 }
 
 const Title = <h1>Title</h1>
-
-const URIView = props => {
-  console.log(props.state.data)
-
-  return (
-    <div>
-      <h2>aaaaaaaaaa</h2>
-      <p>{props.state.data}</p>
-    </div>
-  )
-}
 
 const TableView = props => {
   const data = {
@@ -217,7 +202,7 @@ const TableView = props => {
   const [areaParts, setAreaParts] = React.useState(data.area[1][0])
   const [serviceParts, setServiceParts] = React.useState(data.service[1][0])
   const [genreParts, setGenreParts] = React.useState(data.genre[1][0])
-  const [NHKProgram, setNHKProgram] = React.useState(1)
+  const [NHKProgram, setNHKProgram] = React.useState('')
   const description = [
     '地域',
     'サービス',
@@ -275,13 +260,18 @@ const TableView = props => {
   }
 
   const NHKProgramHandleChange = async props => {
+    const ProgramList = []
     await window
       .fetch(URI)
-      .then(res => res.json)
-      .then(json => json.list)
-      .then(js => console.log({ js }))
-      .then(data => setNHKProgram(data))
-    console.log({ NHKProgram })
+      .then(res => res.json())
+      .then(json => json.list.g1)
+      .then(data => {
+        for (let ele = 0; ele < data.length; ele++) {
+          ProgramList.push(data[ele].title)
+        }
+        setNHKProgram(ProgramList)
+      })
+    console.log(NHKProgram)
   }
 
   const Views = [
@@ -312,27 +302,29 @@ const TableView = props => {
   ]
 
   return (
-    <Paper>
-      {URI}
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>説明</TableCell>
-            <TableCell>値</TableCell>
-          </TableRow>
-        </TableHead>
-        {description.map((l, i) => (
-          <TableRow key={i}>
-            <TableCell>{l}</TableCell>
-            <TableCell>{Views[i]}</TableCell>
-          </TableRow>
-        ))}
-      </Table>
+    <>
+      <Paper>
+        {URI}
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>説明</TableCell>
+              <TableCell>値</TableCell>
+            </TableRow>
+          </TableHead>
+          {description.map((l, i) => (
+            <TableRow key={i}>
+              <TableCell>{l}</TableCell>
+              <TableCell>{Views[i]}</TableCell>
+            </TableRow>
+          ))}
+        </Table>
+      </Paper>
       <NHKProgramView
         state={NHKProgram}
         handleChange={NHKProgramHandleChange}
       />
-    </Paper>
+    </>
   )
 }
 const SelectView = props => {
@@ -353,7 +345,26 @@ const NHKProgramView = props => {
       <Button variant='contained' color='primary' onClick={props.handleChange}>
         ProgramCreate
       </Button>
-      <p>{props.state}</p>
+      <>
+        {props.state.map((l, i) => (
+          <Accordion key={i}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls='panel1a-content'
+              id='panel1a-header'
+            >
+              <Typography>{l}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </>
     </>
   )
 }
