@@ -178,6 +178,7 @@ const TableView = props => {
         '映画（洋画）',
         'アニメ/特撮（国内アニメ）',
         'ドキュメンタリー/共用（社会・時事）',
+        '劇場/公演（落語・演芸）',
         '趣味/教育（旅・釣り・アウトドア）',
         '福祉（高齢者）'
       ],
@@ -197,6 +198,13 @@ const TableView = props => {
       ]
     ]
   }
+  const [data2, setData2] = React.useState(0)
+  React.useEffect(() => {
+    window
+      .fetch('http://localhost:8080/data.json')
+      .then(res => res.json())
+      .then(json => setData2(json))
+  }, [])
   const [areaValue, setAreaValue] = React.useState(0)
   const [serviceValue, setServiceValue] = React.useState(0)
   const [genreValue, setGenreValue] = React.useState(0)
@@ -285,8 +293,7 @@ const TableView = props => {
         }
         setSubNHKProgram(subList)
       })
-    console.log(NHKProgram)
-    console.log(SubNHKProgram)
+    console.log(data2)
   }
 
   const TitleList = []
