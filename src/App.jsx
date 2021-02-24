@@ -249,7 +249,7 @@ const TableView = props => {
     )
   }
   const [dateParts, setDateParts] = React.useState(date[0])
-  const apiKey = SecretKey
+  const apiKey = process.env.SecretKey
   const URI = `https://api.nhk.or.jp/v2/pg/genre/${toTripleDigits(
     areaParts
   )}/${serviceParts}/${genreParts}/${dateParts}.json?key=${apiKey}`
