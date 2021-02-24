@@ -249,9 +249,10 @@ const TableView = props => {
     )
   }
   const [dateParts, setDateParts] = React.useState(date[0])
+  const apiKey = SecretKey
   const URI = `https://api.nhk.or.jp/v2/pg/genre/${toTripleDigits(
     areaParts
-  )}/${serviceParts}/${genreParts}/${dateParts}.json?key=yzrEfoQcuaIhNq54Pls4whL68MiA9fWv`
+  )}/${serviceParts}/${genreParts}/${dateParts}.json?key=${apiKey}`
 
   const areaHandleChange = (event, newValue) => {
     setAreaValue(event.target.value)
